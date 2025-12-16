@@ -1,0 +1,14 @@
+asgiref==3.11.0
+barcode==1.0.4
+Django==6.0
+gunicorn==23.0.0
+Levenshtein==0.27.3
+packaging==25.0
+pillow==12.0.0
+psycopg2-binary==2.9.11
+python-barcode==0.16.1
+python-Levenshtein==0.27.3
+RapidFuzz==3.14.3
+setuptools==80.9.0
+sqlparse==0.5.4
+tzdata==2025.2
