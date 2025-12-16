@@ -1,5 +1,6 @@
 asgiref==3.11.0
 barcode==1.0.4
+dj-database-url==3.0.1
 Django==6.0
 gunicorn==23.0.0
 Levenshtein==0.27.3
