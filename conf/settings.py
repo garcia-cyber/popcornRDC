@@ -1,25 +1,25 @@
 """
-Django settings for conf project, adapted for production deployment on Render.
+Django settings for conf project.
+
+Adapté pour le déploiement sur Render, en utilisant SQLite (attention aux données éphémères).
 """
 
 from pathlib import Path
 import os
-import dj_database_url # Nécessite 'pip install dj-database-url psycopg2-binary'
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 
-# --- 1. SECURITY AND DEBUGGING (PRODUCTION CONFIG) ---
+# --- 1. SECURITY AND DEBUGGING (PRODUCTION CONFIGURATION) ---
 
-# CRITIQUE : Toujours charger la SECRET_KEY depuis les variables d'environnement.
-# Si SECRET_KEY n'est pas définie dans l'ENV, l'application ne démarrera PAS (sécurité).
+# CRITIQUE : La SECRET_KEY est chargée depuis l'environnement. 
 SECRET_KEY = os.environ.get('SECRET_KEY')
 
-# DEBUG: Charger la valeur depuis l'ENV, avec une valeur par défaut 'False'.
+# DEBUG: Charger la valeur depuis l'environnement, avec une valeur par défaut 'False'.
 DEBUG = os.environ.get('DEBUG', 'False') == 'True'
 
-# CRITIQUE : ALLOWED_HOSTS doit également être chargé depuis l'ENV pour la flexibilité.
-# J'ai ajouté un fallback pour le développement local si DEBUG est True.
+# ALLOWED_HOSTS: Utilise la variable d'environnement en production, mais inclut 
+# un fallback pour le développement local si DEBUG=True.
 if DEBUG:
     ALLOWED_HOSTS = ['127.0.0.1', 'localhost', 'popcornrdc.onrender.com']
 else:
@@ -27,12 +27,12 @@ else:
     ALLOWED_HOSTS = os.environ.get('ALLOWED_HOSTS', '').split(',')
 
 
-# CRITIQUE : CSRF_TRUSTED_ORIGINS doit aussi être chargé depuis l'ENV.
-# Render fournit la variable (ou vous devez la définir)
+# CSRF_TRUSTED_ORIGINS: Nécessaire pour la sécurité des formulaires en production.
 CSRF_TRUSTED_ORIGINS = os.environ.get('CSRF_TRUSTED_ORIGINS', '').split(',')
 
 
 # Application definition
+
 INSTALLED_APPS = [
     'django.contrib.admin',
     'django.contrib.auth',
@@ -75,9 +75,8 @@ TEMPLATES = [
 WSGI_APPLICATION = 'conf.wsgi.application'
 
 
-# --- 2. DATABASE CONFIG (POSTGRESQL FOR RENDER) ---
-
-# Par défaut (pour le développement local si DEBUG=True)
+# --- 2. DATABASE CONFIG (SQLITE FOR RENDER) ---
+# ATTENTION : Les données seront perdues à chaque redéploiement sur Render !
 DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.sqlite3',
@@ -85,20 +84,8 @@ DATABASES = {
     }
 }
 
-# Si DEBUG est False (production), on configure la connexion PostgreSQL
-# en utilisant la variable d'environnement DATABASE_URL fournie par Render.
-if not DEBUG:
-    # Utilisez dj_database_url pour analyser la chaîne de connexion
-    # On vérifie si DATABASE_URL existe avant d'essayer de la configurer
-    if os.environ.get('DATABASE_URL'):
-        DATABASES['default'] = dj_database_url.config(
-            conn_max_age=600, 
-            ssl_require=True # Exigé par Render pour les connexions sécurisées
-        )
 
-
-# Password validation
-# (Reste inchangé)
+# Password validation (Inchangé)
 AUTH_PASSWORD_VALIDATORS = [
     {
         'NAME': 'django.contrib.auth.password_validation.UserAttributeSimilarityValidator',
@@ -115,7 +102,7 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
-# Internationalization
+# Internationalization (Inchangé)
 LANGUAGE_CODE = 'en-us'
 
 TIME_ZONE = 'UTC'
@@ -126,13 +113,11 @@ USE_TZ = True
 
 
 # --- 3. STATIC FILES (WHITENOISE CONFIG) ---
-# WhiteNoise gérera ces fichiers en production.
 STATIC_URL = 'static/'
-STATIC_ROOT = BASE_DIR / 'staticfiles'
+STATIC_ROOT = BASE_DIR / 'staticfiles' 
 STATICFILES_DIRS = [
- BASE_DIR / 'static' 
+   BASE_DIR / 'static' 
 ] 
-
 
 # Configuration de WhiteNoise pour la gestion des statiques en production.
 if not DEBUG:
@@ -143,7 +128,7 @@ if not DEBUG:
     }
 
 
-# Auth URLs (Reste inchangé)
+# Auth URLs (Inchangé)
 LOGIN_REDIRECT_URL = '/dashboard/' 
 LOGIN_URL = '/login/'
 LOGOUT_REDIRECT_URL = '/home/' 

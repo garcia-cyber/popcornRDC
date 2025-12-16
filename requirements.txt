@@ -1,12 +1,12 @@
 asgiref==3.11.0
 barcode==1.0.4
-dj-database-url==3.0.1
+# dj-database-url==3.0.1
 Django==6.0
 gunicorn==23.0.0
 Levenshtein==0.27.3
 packaging==25.0
 pillow==12.0.0
-psycopg2-binary==2.9.11
+# psycopg2-binary==2.9.11
 python-barcode==0.16.1
 python-Levenshtein==0.27.3
 RapidFuzz==3.14.3
