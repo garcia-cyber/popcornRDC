@@ -1,0 +1,48 @@
+{% load static %}
+
+{% block title %}Résultat du Scan{% endblock %}
+
+
+<h2 class="mb-4">Recherche de Prix (Scan)</h2>
+
+<div class="row justify-content-center mb-4">
+    <div class="col-md-8">
+        <form method="get" action="{% url 'produits:scanner_code_barre' %}" class="input-group">
+            <input 
+                type="text" 
+                class="form-control form-control-lg" 
+                id="id_code_barre" 
+                name="code_barre" 
+                value="{{ code_entree|default_if_none:'' }}" 
+                placeholder="Scanner ou entrer le code-barres (12 ou 13 chiffres)"
+                aria-label="Code-barres"
+                autofocus
+            >
+            <button type="submit" class="btn btn-info">
+                <i class="fas fa-search"></i> Rechercher
+            </button>
+        </form>
+    </div>
+</div>
+
+<hr>
+
+{% if produit %}
+    <div class="alert alert-success text-center">
+        <h4 class="alert-heading">✅ Prix trouvé !</h4>
+        <h3>{{ produit.nom }}</h3>
+        <p class="mb-1">Code (complet): <strong>{{ produit.get_full_barcode }}</strong></p>
+        <p style="font-size: 3em; font-weight: bold; color: darkred;">{{ produit.prix }} €</p>
+        
+        <a href="{% url 'produits:imprimer_code_barre' produit.id %}" target="_blank" class="btn btn-lg btn-warning mt-3">
+            <i class="fas fa-print"></i> Imprimer l'étiquette
+        </a>
+    </div>
+{% else %}
+    <div class="alert alert-warning text-center">
+        <h4 class="alert-heading">⚠️ {{ message }}</h4>
+        {% if code_entree %}
+            <p>Veuillez vérifier le code <strong>{{ code_entree }}</strong>.</p>
+        {% endif %}
+    </div>
+{% endif %}
